@@ -1,20 +1,21 @@
 #include "frontend.hpp"
 #include "tokens.hpp"
 #include "utils/logger.hpp"
+#include "utils/sentinel.hpp"
 
 #include <algorithm>
-#include <cstdint>
 #include <span>
 #include <string_view>
 
 namespace zink {
 
-static inline constexpr bool is_alpha(char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'; }
-static inline constexpr bool is_numeric(char c) { return c >= '0' && c <= '9'; }
-static inline constexpr bool is_alpha_numeric(char c) { return is_numeric(c) || is_alpha(c); }
+/* --- Helpers ---------------------------------- */
+static constexpr bool is_alpha(char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'; }
+static constexpr bool is_numeric(char c) { return c >= '0' && c <= '9'; }
+static constexpr bool is_alpha_numeric(char c) { return is_numeric(c) || is_alpha(c); }
 
-static inline constexpr TokenTag find_keyword(std::string_view src, std::size_t offset, std::size_t len) {
-    auto keyword { src.substr(offset, offset + len) };
+static constexpr TokenTag find_keyword(std::string_view src, std::size_t offset, std::size_t len) {
+    auto keyword { src.substr(offset, len) };
 
     for (std::size_t i { }; i < keyword_table.size(); ++i) {
         if (keyword_table.at(i) == keyword)
@@ -24,6 +25,7 @@ static inline constexpr TokenTag find_keyword(std::string_view src, std::size_t 
     return TokenTag::Identifier;
 }
 
+/* --- Lexer ------------------------------------ */
 Lexer::Lexer(std::string_view source_code)
     : _source_code(source_code) {
     /* Preallocate a guesstimate of tokens to avoid too many reallocations */
@@ -44,12 +46,12 @@ std::span<const Token> Lexer::tokenize() {
 
         /* Grammar */
         case ';':
-            _tokens.emplace_back(NA, NA, TokenTag::Semicolon);
+            _tokens.emplace_back(sentinel::na, sentinel::na, TokenTag::Semicolon);
             break;
 
         /* Operators */
         case '=':
-            _tokens.emplace_back(NA, NA, TokenTag::Equals);
+            _tokens.emplace_back(sentinel::na, sentinel::na, TokenTag::Equals);
             break;
 
         /* Literals */
@@ -59,20 +61,14 @@ std::span<const Token> Lexer::tokenize() {
                 while (!at_end() && is_numeric(peek()))
                     consume();
 
-                _tokens.emplace_back(
-                    static_cast<std::uint32_t>(start_pos),
-                    static_cast<std::uint16_t>((_idx + 1) - start_pos),
-                    TokenTag::IntLiteral);
+                _tokens.emplace_back(start_pos, (_idx + 1) - start_pos, TokenTag::IntLiteral);
             } else if (is_alpha(current())) {
                 auto start_pos { _idx };
                 while (!at_end() && is_alpha_numeric(peek()))
                     consume();
 
-                auto tag { find_keyword(_source_code, start_pos, _idx + 1) };
-                _tokens.emplace_back(
-                    static_cast<std::uint32_t>(start_pos),
-                    static_cast<std::uint16_t>((_idx + 1) - start_pos),
-                    tag);
+                auto tag { find_keyword(_source_code, start_pos, (_idx + 1) - start_pos) };
+                _tokens.emplace_back(start_pos, (_idx + 1) - start_pos, tag);
             } else {
                 LOG(log::warn, "unknown character found '{}'", current());
             }
@@ -82,7 +78,7 @@ std::span<const Token> Lexer::tokenize() {
         consume();
     }
 
-    _tokens.emplace_back(NA, NA, TokenTag::Eof);
+    _tokens.emplace_back(sentinel::na, sentinel::na, TokenTag::Eof);
     return _tokens;
 }
 

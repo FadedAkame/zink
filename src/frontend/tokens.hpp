@@ -6,8 +6,6 @@
 
 namespace zink {
 
-static inline constexpr auto NA { -1 };
-
 /* clang-format off */
 enum class TokenTag : std::uint8_t {
     /* Keywords */
@@ -27,7 +25,7 @@ enum class TokenTag : std::uint8_t {
 
 /* Keywords MUST be in order in the table & at the top
  * of the TokenTag enum class to properly index into the table*/
-static constexpr std::array<std::string_view, 1> keyword_table = {
+inline constexpr std::array<std::string_view, 1> keyword_table = {
     "var",
 };
 /* clang-format on */
