@@ -1,7 +1,7 @@
 #pragma once
 
 #include <concepts>
-#include <numeric>
+#include <limits>
 
 namespace zink::sentinel {
 
