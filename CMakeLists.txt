@@ -18,6 +18,7 @@ endif()
 
 set(SOURCE_FILES
     src/main.cpp
+    src/frontend/lexer.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})

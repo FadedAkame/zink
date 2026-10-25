@@ -1,7 +1,7 @@
+#include "frontend/frontend.hpp"
 #include "utils/logger.hpp"
 
 #include <fstream>
-#include <iostream>
 #include <iterator>
 
 constexpr auto filename { "tests/var.zn" };
@@ -11,5 +11,7 @@ int main() {
     RELEASE_EXPECT(source_stream.is_open(), "couldn't open file '{}'", filename);
     std::string translation_unit { std::istreambuf_iterator<char> { source_stream }, { } };
 
-    std::cout << translation_unit;
+    zink::Lexer lexer { translation_unit };
+    [[maybe_unused]]
+    auto tokens { lexer.tokenize() };
 }
