@@ -1,19 +1,94 @@
 #include "frontend.hpp"
+#include "tokens.hpp"
+#include "utils/logger.hpp"
 
 #include <algorithm>
+#include <cstdint>
 #include <span>
 #include <string_view>
 
 namespace zink {
 
+static inline constexpr bool is_alpha(char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'; }
+static inline constexpr bool is_numeric(char c) { return c >= '0' && c <= '9'; }
+static inline constexpr bool is_alpha_numeric(char c) { return is_numeric(c) || is_alpha(c); }
+
+static inline constexpr TokenTag find_keyword(std::string_view src, std::size_t offset, std::size_t len) {
+    auto keyword { src.substr(offset, offset + len) };
+
+    for (std::size_t i { }; i < keyword_table.size(); ++i) {
+        if (keyword_table.at(i) == keyword)
+            return static_cast<TokenTag>(i);
+    }
+
+    return TokenTag::Identifier;
+}
+
 Lexer::Lexer(std::string_view source_code)
     : _source_code(source_code) {
+    /* Preallocate a guesstimate of tokens to avoid too many reallocations */
     auto count { static_cast<std::size_t>(std::ranges::count(_source_code, ';')) };
     _tokens.reserve(count * 6);
 }
 
 std::span<const Token> Lexer::tokenize() {
+    while (!at_end()) {
+        switch (current()) {
+        /* Whitespace */
+        case ' ':
+        case '\n':
+        case '\t':
+        case '\v':
+        case '\r':
+            break;
+
+        /* Grammar */
+        case ';':
+            _tokens.emplace_back(NA, NA, TokenTag::Semicolon);
+            break;
+
+        /* Operators */
+        case '=':
+            _tokens.emplace_back(NA, NA, TokenTag::Equals);
+            break;
+
+        /* Literals */
+        default:
+            if (is_numeric(current())) {
+                auto start_pos { _idx };
+                while (!at_end() && is_numeric(peek()))
+                    consume();
+
+                _tokens.emplace_back(
+                    static_cast<std::uint32_t>(start_pos),
+                    static_cast<std::uint16_t>((_idx + 1) - start_pos),
+                    TokenTag::IntLiteral);
+            } else if (is_alpha(current())) {
+                auto start_pos { _idx };
+                while (!at_end() && is_alpha_numeric(peek()))
+                    consume();
+
+                auto tag { find_keyword(_source_code, start_pos, _idx + 1) };
+                _tokens.emplace_back(
+                    static_cast<std::uint32_t>(start_pos),
+                    static_cast<std::uint16_t>((_idx + 1) - start_pos),
+                    tag);
+            } else {
+                LOG(log::warn, "unknown character found '{}'", current());
+            }
+            break;
+        }
+
+        consume();
+    }
+
+    _tokens.emplace_back(NA, NA, TokenTag::Eof);
     return _tokens;
 }
+
+constexpr bool Lexer::at_end() const { return _idx + 1 >= _source_code.length(); }
+constexpr char Lexer::current() const { return _source_code.at(_idx); }
+constexpr char Lexer::peek() const { return _source_code.at(_idx + 1); }
+constexpr char Lexer::consume() { return _source_code.at(++_idx); }
 
 }

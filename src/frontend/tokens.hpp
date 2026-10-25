@@ -1,24 +1,34 @@
 #pragma once
 
+#include <array>
 #include <cstdint>
+#include <string_view>
 
 namespace zink {
 
+static inline constexpr auto NA { -1 };
+
 /* clang-format off */
 enum class TokenTag : std::uint8_t {
+    /* Keywords */
+    Var = 0,
+
     /* Literals */
     Identifier, IntLiteral,
 
     /* Grammar */
     Semicolon,
 
-    /* Keywords */
-    Var,
-
     /* Operators */
     Equals,
 
     Eof
+};
+
+/* Keywords MUST be in order in the table & at the top
+ * of the TokenTag enum class to properly index into the table*/
+static constexpr std::array<std::string_view, 1> keyword_table = {
+    "var",
 };
 /* clang-format on */
 
@@ -26,9 +36,9 @@ enum class TokenTag : std::uint8_t {
  * and a string_view (24 bytes) & more cache
  * friendly. Although a SoA's *might* be better. */
 struct Token {
-    std::uint32_t offset;
-    std::uint16_t len;
-    TokenTag tag;
+    std::uint32_t offset; /* Offset into the src code */
+    std::uint16_t len; /* Length of token from offset */
+    TokenTag tag; /* TokenTag of what the token is */
 };
 
 static_assert(sizeof(Token) == 8);
