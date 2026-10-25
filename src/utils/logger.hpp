@@ -31,25 +31,25 @@ inline constexpr std::uint8_t err { 2 };
 consteval auto level_to_char(std::uint8_t level) {
     switch (level) {
     case info:
-        return "[I]";
+        return "[I] ";
     case warn:
-        return "[W]";
+        return "[W] ";
     case err:
-        return "[E]";
+        return "[E] ";
     default:
-        return "[?]";
+        return "[?] ";
     }
 }
 
 template <std::uint8_t Level, typename... Args>
 inline void write(std::format_string<Args...> msg, Args&&... args) {
     static constexpr auto& out { Level == err ? std::cerr : std::clog };
-    out << std::format(msg, std::forward<Args>(args)...) << '\n';
+    out << level_to_char(Level) << std::format(msg, std::forward<Args>(args)...) << '\n';
 }
 template <std::uint8_t Level>
 inline void write(const char* msg) {
     static constexpr auto& out { Level == err ? std::cerr : std::clog };
-    out << msg << '\n';
+    out << level_to_char(Level) << msg << '\n';
 }
 
 template <typename... Args>
