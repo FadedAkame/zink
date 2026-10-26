@@ -3,6 +3,7 @@
 #include <array>
 #include <cstdint>
 #include <string_view>
+#include <utility>
 
 namespace zink {
 
@@ -25,9 +26,9 @@ enum class TokenTag : std::uint8_t {
 
 /* Keywords MUST be in order in the table & at the top
  * of the TokenTag enum class to properly index into the table*/
-inline constexpr std::array<std::string_view, 1> keyword_table = {
-    "var",
-};
+inline constexpr std::array<std::pair<std::string_view, TokenTag>, 1> keyword_table = {{
+    {"var", TokenTag::Var},
+}};
 /* clang-format on */
 
 /* More memory efficient (8 bytes) than a tag

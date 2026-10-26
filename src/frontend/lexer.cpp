@@ -17,10 +17,9 @@ static constexpr bool is_alpha_numeric(char c) { return is_numeric(c) || is_alph
 static constexpr TokenTag find_keyword(std::string_view src, std::size_t offset, std::size_t len) {
     auto keyword { src.substr(offset, len) };
 
-    for (std::size_t i { }; i < keyword_table.size(); ++i) {
-        if (keyword_table.at(i) == keyword)
-            return static_cast<TokenTag>(i);
-    }
+    for (const auto& key : keyword_table)
+        if (key.first == keyword)
+            return key.second;
 
     return TokenTag::Identifier;
 }
