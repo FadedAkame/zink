@@ -18,6 +18,7 @@ endif()
 
 set(SOURCE_FILES
     src/main.cpp
+    src/utils/dumper.cpp
     src/frontend/lexer.cpp
 )
 

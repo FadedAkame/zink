@@ -1,4 +1,5 @@
 #include "frontend/frontend.hpp"
+#include "utils/dumper.hpp"
 #include "utils/logger.hpp"
 
 #include <fstream>
@@ -14,4 +15,6 @@ int main() {
     zink::Lexer lexer { translation_unit };
     [[maybe_unused]]
     auto tokens { lexer.tokenize() };
+
+    zink::dumper::tokens(tokens);
 }

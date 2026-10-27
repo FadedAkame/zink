@@ -14,6 +14,16 @@ struct SentinelValue {
     constexpr operator T() const noexcept {
         return std::numeric_limits<T>::max();
     }
+
+    /* i hate c++ */
+    template <std::unsigned_integral T>
+    friend constexpr bool operator==(T x, SentinelValue) {
+        return x == std::numeric_limits<T>::max();
+    }
+    template <std::unsigned_integral T>
+    friend constexpr bool operator==(SentinelValue, T x) {
+        return x == std::numeric_limits<T>::max();
+    }
 };
 
 inline constexpr SentinelValue na { }; /* No index applicable */
