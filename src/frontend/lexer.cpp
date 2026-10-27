@@ -14,9 +14,7 @@ static constexpr bool is_alpha(char c) { return (c >= 'a' && c <= 'z') || (c >= 
 static constexpr bool is_numeric(char c) { return c >= '0' && c <= '9'; }
 static constexpr bool is_alpha_numeric(char c) { return is_numeric(c) || is_alpha(c); }
 
-static constexpr TokenTag find_keyword(std::string_view src, std::size_t offset, std::size_t len) {
-    auto keyword { src.substr(offset, len) };
-
+static constexpr TokenTag find_keyword(std::string_view keyword) {
     for (const auto& key : keyword_table)
         if (key.first == keyword)
             return key.second;
@@ -53,23 +51,26 @@ std::span<const Token> Lexer::tokenize() {
             _tokens.emplace_back(sentinel::na, sentinel::na, TokenTag::Equals);
             break;
 
-        /* Literals */
         default:
             if (is_numeric(current())) {
+                /* Tokenize literals */
                 auto start_pos { _idx };
                 while (!at_end() && is_numeric(peek()))
                     consume();
+                auto end_pos { (_idx + 1) - start_pos };
 
-                _tokens.emplace_back(start_pos, (_idx + 1) - start_pos, TokenTag::IntLiteral);
+                _tokens.emplace_back(start_pos, end_pos, TokenTag::IntLiteral);
             } else if (is_alpha(current())) {
+                /* Tokenize identifiers */
                 auto start_pos { _idx };
                 while (!at_end() && is_alpha_numeric(peek()))
                     consume();
+                auto end_pos { (_idx + 1) - start_pos };
 
-                auto tag { find_keyword(_source_code, start_pos, (_idx + 1) - start_pos) };
-                _tokens.emplace_back(start_pos, (_idx + 1) - start_pos, tag);
+                auto tag { find_keyword(_source_code.substr(start_pos, end_pos)) };
+                _tokens.emplace_back(start_pos, end_pos, tag);
             } else {
-                LOG(log::warn, "unknown character found '{}'", current());
+                LOG(log::err, "unknown character found '{}'", current());
             }
             break;
         }
