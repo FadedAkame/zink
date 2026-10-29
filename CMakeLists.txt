@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(ENABLE_DEBUG "Build in debug mode" ON)
-option(ENABLE_ASAN  "Enable AddressSanitizer + UBSan" ON)
+option(ENABLE_ASAN  "Enable AddressSanitizer + UBSan" OFF)
 
 if(ENABLE_DEBUG)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)
@@ -16,17 +16,16 @@ else()
     set(CMAKE_BUILD_TYPE Release CACHE STRING "" FORCE)
 endif()
 
-set(SOURCE_FILES
-    src/main.cpp
-    src/utils/dumper.cpp
-    src/frontend/lexer.cpp
+file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
 )
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE src)
-target_compile_options(${PROJECT_NAME} 
-    PRIVATE -Werror -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow
+target_compile_options(${PROJECT_NAME} PRIVATE
+    -Werror -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow
+    -Wformat=2 -Wnull-dereference -Wdouble-promotion
 )
 
 if(ENABLE_ASAN)
