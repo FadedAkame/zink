@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(ENABLE_DEBUG "Build in debug mode" ON)
-option(ENABLE_ASAN  "Enable AddressSanitizer + UBSan" OFF)
+option(ENABLE_ASAN  "Enable AddressSanitizer + UBSan" ON)
 
 if(ENABLE_DEBUG)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)
