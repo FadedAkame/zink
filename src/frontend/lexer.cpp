@@ -26,7 +26,7 @@ Lexer::Lexer(TranslationUnit& ctx)
     : _source_code(ctx.source_code)
     , _tokens(ctx.tokens) {
     /* Preallocate a guesstimate of tokens to avoid too many reallocations */
-    auto count { static_cast<std::size_t>(std::ranges::count(_source_code, ';')) };
+    const auto count { static_cast<std::size_t>(std::ranges::count(_source_code, ';')) };
     _tokens.reserve(count * 6);
 }
 
@@ -54,20 +54,20 @@ void Lexer::tokenize() {
         default:
             if (is_numeric(current())) {
                 /* Tokenize literals */
-                auto start_pos { _idx };
+                const auto start_pos { _idx };
                 while (!at_end() && is_numeric(peek()))
                     consume();
-                auto end_pos { (_idx + 1) - start_pos };
 
+                const auto end_pos { (_idx + 1) - start_pos };
                 _tokens.emplace_back(start_pos, end_pos, TokenTag::IntLiteral);
             } else if (is_alpha(current())) {
                 /* Tokenize identifiers */
-                auto start_pos { _idx };
+                const auto start_pos { _idx };
                 while (!at_end() && is_alpha_numeric(peek()))
                     consume();
-                auto end_pos { (_idx + 1) - start_pos };
 
-                auto tag { find_keyword(_source_code.substr(start_pos, end_pos)) };
+                const auto end_pos { (_idx + 1) - start_pos };
+                const auto tag { find_keyword(_source_code.substr(start_pos, end_pos)) };
                 _tokens.emplace_back(start_pos, end_pos, tag);
             } else {
                 LOG(log::err, "unknown character found '{}'", current());
