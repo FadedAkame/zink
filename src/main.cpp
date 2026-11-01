@@ -18,7 +18,9 @@ int main() {
     ctx.source_code = std::string(std::istreambuf_iterator<char> { source_stream }, { });
 
     Lexer lexer { ctx };
+    Parser parser { ctx };
     lexer.tokenize();
+    parser.parse();
 
     dumper::tokens(ctx.tokens);
 }

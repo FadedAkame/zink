@@ -22,4 +22,14 @@ private:
     std::size_t _idx { };
 };
 
+class Parser {
+public:
+    Parser(TranslationUnit& ctx);
+    void parse();
+
+private:
+    TranslationUnit& _ctx;
+    std::size_t _idx { };
+};
+
 }
