@@ -4,9 +4,10 @@
 namespace zink {
 
 Parser::Parser(TranslationUnit& ctx)
-    : _ctx(ctx) {
+    : _tokens(ctx.tokens)
+    , _nodes(ctx.nodes) {
     /* Preallocate AST */
-    _ctx.nodes.reserve(_ctx.tokens.size());
+    _nodes.reserve(_tokens.size());
 }
 
 void Parser::parse() {

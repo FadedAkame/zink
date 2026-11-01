@@ -3,6 +3,9 @@
 #include "translation_unit.hpp"
 
 #include <cstddef>
+#include <span>
+#include <string_view>
+#include <vector>
 
 namespace zink {
 
@@ -18,7 +21,8 @@ private:
     constexpr char consume();
 
 private:
-    TranslationUnit& _ctx;
+    std::string_view _source_code;
+    std::vector<Token>& _tokens;
     std::size_t _idx { };
 };
 
@@ -28,7 +32,8 @@ public:
     void parse();
 
 private:
-    TranslationUnit& _ctx;
+    std::span<const Token> _tokens;
+    std::vector<ASTNode>& _nodes;
     std::size_t _idx { };
 };
 

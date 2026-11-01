@@ -23,10 +23,11 @@ static constexpr TokenTag find_keyword(std::string_view keyword) {
 
 /* --- Lexer ------------------------------------ */
 Lexer::Lexer(TranslationUnit& ctx)
-    : _ctx(ctx) {
+    : _source_code(ctx.source_code)
+    , _tokens(ctx.tokens) {
     /* Preallocate a guesstimate of tokens to avoid too many reallocations */
-    auto count { static_cast<std::size_t>(std::ranges::count(_ctx.source_code, ';')) };
-    _ctx.tokens.reserve(count * 6);
+    auto count { static_cast<std::size_t>(std::ranges::count(_source_code, ';')) };
+    _tokens.reserve(count * 6);
 }
 
 void Lexer::tokenize() {
@@ -42,12 +43,12 @@ void Lexer::tokenize() {
 
         /* Grammar */
         case ';':
-            _ctx.tokens.emplace_back(sentinel::na, sentinel::na, TokenTag::Semicolon);
+            _tokens.emplace_back(sentinel::na, sentinel::na, TokenTag::Semicolon);
             break;
 
         /* Operators */
         case '=':
-            _ctx.tokens.emplace_back(sentinel::na, sentinel::na, TokenTag::Equals);
+            _tokens.emplace_back(sentinel::na, sentinel::na, TokenTag::Equals);
             break;
 
         default:
@@ -58,7 +59,7 @@ void Lexer::tokenize() {
                     consume();
                 auto end_pos { (_idx + 1) - start_pos };
 
-                _ctx.tokens.emplace_back(start_pos, end_pos, TokenTag::IntLiteral);
+                _tokens.emplace_back(start_pos, end_pos, TokenTag::IntLiteral);
             } else if (is_alpha(current())) {
                 /* Tokenize identifiers */
                 auto start_pos { _idx };
@@ -66,8 +67,8 @@ void Lexer::tokenize() {
                     consume();
                 auto end_pos { (_idx + 1) - start_pos };
 
-                auto tag { find_keyword(_ctx.source_code.substr(start_pos, end_pos)) };
-                _ctx.tokens.emplace_back(start_pos, end_pos, tag);
+                auto tag { find_keyword(_source_code.substr(start_pos, end_pos)) };
+                _tokens.emplace_back(start_pos, end_pos, tag);
             } else {
                 LOG(log::err, "unknown character found '{}'", current());
             }
@@ -77,12 +78,12 @@ void Lexer::tokenize() {
         consume();
     }
 
-    _ctx.tokens.emplace_back(sentinel::na, sentinel::na, TokenTag::Eof);
+    _tokens.emplace_back(sentinel::na, sentinel::na, TokenTag::Eof);
 }
 
-constexpr bool Lexer::at_end() const { return _idx + 1 >= _ctx.source_code.length(); }
-constexpr char Lexer::current() const { return _ctx.source_code.at(_idx); }
-constexpr char Lexer::peek() const { return _ctx.source_code.at(_idx + 1); }
-constexpr char Lexer::consume() { return _ctx.source_code.at(++_idx); }
+constexpr bool Lexer::at_end() const { return _idx + 1 >= _source_code.length(); }
+constexpr char Lexer::current() const { return _source_code.at(_idx); }
+constexpr char Lexer::peek() const { return _source_code.at(_idx + 1); }
+constexpr char Lexer::consume() { return _source_code.at(++_idx); }
 
 }
