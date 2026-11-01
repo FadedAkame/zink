@@ -1,11 +1,10 @@
 #include "frontend.hpp"
 #include "tokens.hpp"
+#include "translation_unit.hpp"
 #include "utils/logger.hpp"
 #include "utils/sentinel.hpp"
 
 #include <algorithm>
-#include <span>
-#include <string_view>
 
 namespace zink {
 
@@ -23,14 +22,14 @@ static constexpr TokenTag find_keyword(std::string_view keyword) {
 }
 
 /* --- Lexer ------------------------------------ */
-Lexer::Lexer(std::string_view source_code)
-    : _source_code(source_code) {
+Lexer::Lexer(TranslationUnit& ctx)
+    : _ctx(ctx) {
     /* Preallocate a guesstimate of tokens to avoid too many reallocations */
-    auto count { static_cast<std::size_t>(std::ranges::count(_source_code, ';')) };
-    _tokens.reserve(count * 6);
+    auto count { static_cast<std::size_t>(std::ranges::count(_ctx.source_code, ';')) };
+    _ctx.tokens.reserve(count * 6);
 }
 
-std::span<const Token> Lexer::tokenize() {
+void Lexer::tokenize() {
     while (!at_end()) {
         switch (current()) {
         /* Whitespace */
@@ -43,12 +42,12 @@ std::span<const Token> Lexer::tokenize() {
 
         /* Grammar */
         case ';':
-            _tokens.emplace_back(sentinel::na, sentinel::na, TokenTag::Semicolon);
+            _ctx.tokens.emplace_back(sentinel::na, sentinel::na, TokenTag::Semicolon);
             break;
 
         /* Operators */
         case '=':
-            _tokens.emplace_back(sentinel::na, sentinel::na, TokenTag::Equals);
+            _ctx.tokens.emplace_back(sentinel::na, sentinel::na, TokenTag::Equals);
             break;
 
         default:
@@ -59,7 +58,7 @@ std::span<const Token> Lexer::tokenize() {
                     consume();
                 auto end_pos { (_idx + 1) - start_pos };
 
-                _tokens.emplace_back(start_pos, end_pos, TokenTag::IntLiteral);
+                _ctx.tokens.emplace_back(start_pos, end_pos, TokenTag::IntLiteral);
             } else if (is_alpha(current())) {
                 /* Tokenize identifiers */
                 auto start_pos { _idx };
@@ -67,8 +66,8 @@ std::span<const Token> Lexer::tokenize() {
                     consume();
                 auto end_pos { (_idx + 1) - start_pos };
 
-                auto tag { find_keyword(_source_code.substr(start_pos, end_pos)) };
-                _tokens.emplace_back(start_pos, end_pos, tag);
+                auto tag { find_keyword(_ctx.source_code.substr(start_pos, end_pos)) };
+                _ctx.tokens.emplace_back(start_pos, end_pos, tag);
             } else {
                 LOG(log::err, "unknown character found '{}'", current());
             }
@@ -78,13 +77,12 @@ std::span<const Token> Lexer::tokenize() {
         consume();
     }
 
-    _tokens.emplace_back(sentinel::na, sentinel::na, TokenTag::Eof);
-    return _tokens;
+    _ctx.tokens.emplace_back(sentinel::na, sentinel::na, TokenTag::Eof);
 }
 
-constexpr bool Lexer::at_end() const { return _idx + 1 >= _source_code.length(); }
-constexpr char Lexer::current() const { return _source_code.at(_idx); }
-constexpr char Lexer::peek() const { return _source_code.at(_idx + 1); }
-constexpr char Lexer::consume() { return _source_code.at(++_idx); }
+constexpr bool Lexer::at_end() const { return _idx + 1 >= _ctx.source_code.length(); }
+constexpr char Lexer::current() const { return _ctx.source_code.at(_idx); }
+constexpr char Lexer::peek() const { return _ctx.source_code.at(_idx + 1); }
+constexpr char Lexer::consume() { return _ctx.source_code.at(++_idx); }
 
 }
