@@ -22,5 +22,5 @@ int main() {
     lexer.tokenize();
     parser.parse();
 
-    dumper::tokens(ctx.tokens);
+    dump::tokens(ctx.tokens);
 }

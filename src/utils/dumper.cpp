@@ -18,7 +18,7 @@ void tokens(std::span<const Token> tokens) {
             CASE(TokenTag::Equals);
             CASE(TokenTag::Eof);
         default:
-            return "Unknown: you shouldn't see this";
+            return "Unknown: check if ALL lexer tokens are cased in dumper!";
         }
     };
 #undef CASE
