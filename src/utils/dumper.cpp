@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-namespace zink::dumper {
+namespace zink::dump {
 
 void tokens(std::span<const Token> tokens) {
 #define CASE(v) \

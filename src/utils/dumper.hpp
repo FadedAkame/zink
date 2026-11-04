@@ -4,7 +4,7 @@
 
 #include <span>
 
-namespace zink::dumper {
+namespace zink::dump {
 
 void tokens(std::span<const Token> tokens);
 

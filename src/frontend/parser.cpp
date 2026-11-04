@@ -6,7 +6,7 @@ namespace zink {
 Parser::Parser(TranslationUnit& ctx)
     : _tokens(ctx.tokens)
     , _nodes(ctx.nodes) {
-    /* Preallocate AST */
+    /* Preallocate AST, avoids many reallocations */
     _nodes.reserve(_tokens.size());
 }
 

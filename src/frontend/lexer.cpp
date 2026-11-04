@@ -9,9 +9,15 @@
 namespace zink {
 
 /* --- Helpers ---------------------------------- */
-static constexpr bool is_alpha(char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'; }
-static constexpr bool is_numeric(char c) { return c >= '0' && c <= '9'; }
-static constexpr bool is_alpha_numeric(char c) { return is_numeric(c) || is_alpha(c); }
+static constexpr bool is_alpha(char c) {
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+}
+static constexpr bool is_numeric(char c) {
+    return c >= '0' && c <= '9';
+}
+static constexpr bool is_alpha_numeric(char c) {
+    return is_numeric(c) || is_alpha(c);
+}
 
 static constexpr TokenTag find_keyword(std::string_view keyword) {
     for (const auto& key : keyword_table)
@@ -25,7 +31,7 @@ static constexpr TokenTag find_keyword(std::string_view keyword) {
 Lexer::Lexer(TranslationUnit& ctx)
     : _source_code(ctx.source_code)
     , _tokens(ctx.tokens) {
-    /* Preallocate a guesstimate of tokens to avoid too many reallocations */
+    /* Preallocate token stream, avoids many reallocations */
     const auto count { static_cast<std::size_t>(std::ranges::count(_source_code, ';')) };
     _tokens.reserve(count * 6);
 }
@@ -70,6 +76,7 @@ void Lexer::tokenize() {
                 const auto tag { find_keyword(_source_code.substr(start_pos, end_pos)) };
                 _tokens.emplace_back(start_pos, end_pos, tag);
             } else {
+                /* Nothing detected */
                 LOG(log::err, "unknown character found '{}'", current());
             }
             break;

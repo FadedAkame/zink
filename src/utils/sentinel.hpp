@@ -5,8 +5,7 @@
 
 namespace zink::sentinel {
 
-/* Proxy object that adapts to any unsigned type
- * given enough context.
+/* Proxy object that adapts to integral unsigned types given enough context.
  * size_t x = sentinel::na; // x == std::numeric_limits<size_t>::max()
  * uint8_t y = sentinel::na; // y == std::numeric_limits<uint8_t>::max() */
 struct SentinelValue {
@@ -15,7 +14,6 @@ struct SentinelValue {
         return std::numeric_limits<T>::max();
     }
 
-    /* i hate c++ */
     template <std::unsigned_integral T>
     friend constexpr bool operator==(T x, SentinelValue) {
         return x == std::numeric_limits<T>::max();
