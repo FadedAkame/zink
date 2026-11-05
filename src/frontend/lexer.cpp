@@ -77,7 +77,7 @@ void Lexer::tokenize() {
                 _tokens.emplace_back(start_pos, end_pos, tag);
             } else {
                 /* Nothing detected */
-                LOG(log::err, "unknown character found '{}'", current());
+                ZLOG(log::err, "unknown character found '{}'", current());
             }
             break;
         }

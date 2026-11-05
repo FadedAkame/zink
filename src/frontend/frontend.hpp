@@ -32,9 +32,25 @@ public:
     void parse();
 
 private:
+    constexpr bool at_end() const;
+    constexpr Token current() const;
+    constexpr Token peek() const;
+    constexpr Token consume();
+    constexpr void push_node(ASTTag tag,
+        ASTNode::TokenIndex main_token,
+        ASTNode::ASTIndex lhs,
+        ASTNode::ASTIndex rhs);
+
+    void declaration();
+    void expression();
+
+    void variable_decl();
+
+private:
     std::span<const Token> _tokens;
     std::vector<ASTNode>& _nodes;
-    std::size_t _idx { };
+    Token::SrcCodeOffset _token_idx { };
+    ASTNode::ASTIndex _ast_idx { };
 };
 
 }

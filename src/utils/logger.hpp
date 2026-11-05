@@ -6,9 +6,11 @@
 #include <utility>
 
 #ifndef DNDEBUG
-    #define LOG(level, ...) \
+    /* General log macro for Zink, supports [info, warn, err] as log levels. */
+    #define ZLOG(level, ...) \
         zink::detail::log::write<(level)>(__VA_ARGS__)
 
+    /* Expect the [expr] to be true, if not then panic, gets removed in release. */
     #define DEBUG_EXPECT(expr, ...)                    \
         do {                                           \
             if (!(expr))                               \
@@ -16,11 +18,16 @@
         } while (0)
 #endif
 
+/* Expect the [expr] to be true, if not then panic, doesn't get removed in release. */
 #define RELEASE_EXPECT(expr, ...)                  \
     do {                                           \
         if (!(expr))                               \
             zink::detail::log::panic(__VA_ARGS__); \
     } while (0)
+
+/* This should ONLY be called in absolute unrecoverable errors. */
+#define PANIC(...) \
+    zink::detail::log::panic(__VA_ARGS__)
 
 namespace zink::log {
 

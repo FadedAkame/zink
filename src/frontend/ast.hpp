@@ -19,6 +19,16 @@ enum class ASTTag : std::uint8_t {
      * lhs = index into beginning of expression.
      * rhs = NA. */
     VarDecl,
+
+    /* Expressions */
+    /* main_token = number.
+     * lhs = NA.
+     * rhs = NA. */
+    NumLiteral,
+    /* main_token = symbol.
+     * lhs = NA.
+     * rhs = NA. */
+    Symbol,
 };
 
 struct ASTNode {
