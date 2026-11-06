@@ -8,7 +8,7 @@
 
 using namespace zink;
 
-constexpr auto filename { "tests/var.zn" };
+constexpr auto filename { "tests/var.zk" };
 
 int main() {
     std::fstream source_stream { filename };
