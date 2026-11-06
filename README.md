@@ -21,6 +21,7 @@ fn main() u8 {
     return 0;
 }
 ```
+*NOTE: This is the planned future syntax example in Zink*
 
 ---
 ## Status
