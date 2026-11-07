@@ -18,6 +18,11 @@
         } while (0)
 #endif
 
+/* General log macro for Zink BUT lasts outside of debug, should only be used for
+ * dumpers or similar */
+#define RELEASE_ZLOG(level, ...) \
+    zink::detail::log::write<(level)>(__VA_ARGS__)
+
 /* Expect the [expr] to be true, if not then panic, doesn't get removed in release. */
 #define RELEASE_EXPECT(expr, ...)                  \
     do {                                           \

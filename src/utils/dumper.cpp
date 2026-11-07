@@ -4,66 +4,68 @@
 #include "logger.hpp"
 #include "sentinel.hpp"
 
-#include <iostream>
-
 namespace zink::dump {
 
+#define CASE(v) \
+    case (v):   \
+        return #v;
+
 void tokens(std::span<const Token> tokens) {
-#define CASE(v) \
-    case (v):   \
-        return #v;
-    auto get_str = [](TokenTag tag) {
+    auto enum2str = [](TokenTag tag) {
+        using token = zink::TokenTag;
+
         switch (tag) {
-            CASE(TokenTag::Var);
-            CASE(TokenTag::Identifier);
-            CASE(TokenTag::IntLiteral);
-            CASE(TokenTag::Semicolon);
-            CASE(TokenTag::Equals);
-            CASE(TokenTag::Eof);
+            CASE(token::Var);
+            CASE(token::Identifier);
+            CASE(token::IntLiteral);
+            CASE(token::Semicolon);
+            CASE(token::Equals);
+            CASE(token::Eof);
         default:
-            return "Unknown: check if ALL lexer tokens are cased in dumper!";
+            PANIC("Unknown: check if ALL lexer tokens are cased in dumper!");
         }
     };
-#undef CASE
 
-    ZLOG(log::info, "--- Lexer Output Tokens ---");
-    ZLOG(log::info, "[TOKEN_TAG OFFSET:LENGTH]");
+    std::size_t counter { };
+    RELEASE_ZLOG(log::info, "--- Lexer Output Tokens ---");
+    RELEASE_ZLOG(log::info, "[TOKEN_TAG OFFSET:LENGTH] : INDICE");
     for (const auto& tok : tokens) {
-        std::clog << '[' << get_str(tok.tag)
-                  << ' '
-                  << (tok.offset == sentinel::na ? "NA" : std::to_string(tok.offset))
-                  << ':'
-                  << (tok.len == sentinel::na ? "NA" : std::to_string(tok.len))
-                  << "]\n";
+        RELEASE_ZLOG(log::info, "  [{} {}:{}] : {}",
+            enum2str(tok.tag),
+            (tok.offset == sentinel::na ? "NA" : std::to_string(tok.offset)),
+            (tok.len == sentinel::na ? "NA" : std::to_string(tok.len)),
+            counter);
+        ++counter;
     }
 }
 
-void ast(std::span<const ASTNode> ast) {
-#define CASE(v) \
-    case (v):   \
-        return #v;
-    auto get_str = [](ASTTag tag) {
+void ast(std::span<const ASTNode> ast_tree) {
+    auto enum2str = [](ASTTag tag) {
+        using ast = zink::ASTTag;
+
         switch (tag) {
-            CASE(ASTTag::VarDecl);
-            CASE(ASTTag::NumLiteral);
-            CASE(ASTTag::Symbol);
+            CASE(ast::VarDecl);
+            CASE(ast::NumLiteral);
+            CASE(ast::Symbol);
         default:
-            return "Unknown: check if ALL lexer tokens are cased in dumper!";
+            PANIC("Unknown: check if ALL ASTTags are cased in dumper!");
         }
     };
-#undef CASE
 
-    ZLOG(log::info, "--- AST Tree ---");
-    ZLOG(log::info, "'ast.hpp' for more info on the structure.");
-    for (const auto& node : ast) {
-        std::clog << '[' << get_str(node.tag)
-                  << ' '
-                  << "Token(" << node.main_token << ") "
-                  << (node.lhs == sentinel::na ? "NA" : std::to_string(node.lhs))
-                  << ':'
-                  << (node.rhs == sentinel::na ? "NA" : std::to_string(node.rhs))
-                  << "]\n";
+    std::size_t counter { };
+    RELEASE_ZLOG(log::info, "--- AST Tree ---");
+    RELEASE_ZLOG(log::info, "[implementation defined] : INDICE");
+    for (const auto& node : ast_tree) {
+        RELEASE_ZLOG(log::info, "  [{} Token({}) {}:{}] : {}",
+            enum2str(node.tag),
+            node.main_token,
+            (node.lhs == sentinel::na ? "NA" : std::to_string(node.lhs)),
+            (node.rhs == sentinel::na ? "NA" : std::to_string(node.rhs)),
+            counter);
+        ++counter;
     }
 }
+
+#undef CASE
 
 }
