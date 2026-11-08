@@ -11,6 +11,14 @@ Zink aims to keep its language design dead simple, its standard library lightwei
 Zink is NOT trying to be a replacement of any language, its simply a overly ambitious learning project.
 
 ---
+## Status
+*See ```ROADMAP.md``` for details on the active progression.*
+
+Zink is currently still in active development.
+
+Features and syntax are subject to change as the compiler matures and evolves.
+
+---
 ## Example
 *"Hello, World!" example program in Zink*
 ```
@@ -21,22 +29,14 @@ fn main() u8 {
     return 0;
 }
 ```
-*NOTE: This is the planned future syntax example in Zink*
-
----
-## Status
-*See ```ROADMAP.md``` for details on the active progression.*
-
-Zink is currently still in active development.
-
-Features and syntax are subject to change as the compiler matures and evolves.
+*NOTE: This is the planned future syntax example in Zink and may not represent the actual current capabilities of Zink*
 
 ---
 ## Requirements
 *Developed & Tested on Arch Linux*
 - **OS:** Linux
 - **Compiler:** GCC w/ C++20 support
-- **Build System:** CMake + GNU Make
+- **Build System:** CMake + Ninja
 
 ---
 ## Building
