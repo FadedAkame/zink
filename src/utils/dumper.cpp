@@ -12,15 +12,15 @@ namespace zink::dump {
 
 void tokens(std::span<const Token> tokens) {
     auto enum2str = [](TokenTag tag) {
-        using token = zink::TokenTag;
+        using enum TokenTag;
 
         switch (tag) {
-            CASE(token::Var);
-            CASE(token::Identifier);
-            CASE(token::IntLiteral);
-            CASE(token::Semicolon);
-            CASE(token::Equals);
-            CASE(token::Eof);
+            CASE(Var);
+            CASE(Identifier);
+            CASE(IntLiteral);
+            CASE(Semicolon);
+            CASE(Equals);
+            CASE(Eof);
         default:
             PANIC("Unknown: check if ALL lexer tokens are cased in dumper!");
         }
@@ -41,12 +41,12 @@ void tokens(std::span<const Token> tokens) {
 
 void ast(std::span<const ASTNode> ast_tree) {
     auto enum2str = [](ASTTag tag) {
-        using ast = zink::ASTTag;
+        using enum ASTTag;
 
         switch (tag) {
-            CASE(ast::VarDecl);
-            CASE(ast::Number);
-            CASE(ast::Symbol);
+            CASE(VarDecl);
+            CASE(Number);
+            CASE(Symbol);
         default:
             PANIC("Unknown: check if ALL ASTTags are cased in dumper!");
         }
