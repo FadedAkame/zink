@@ -46,7 +46,7 @@ git clone https://github.com/FadedAkame/zink.git
 ```
 Then configure and build the project.
 ```
-cmake -B build
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j$(nproc)
 ```
 

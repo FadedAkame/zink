@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-BUILD_DIR=build
-BIN="$BUILD_DIR/zink"
+BIN_NAME="project"
+BUILD_DIR="build"
 
 cmake --build "$BUILD_DIR" -j"$(nproc)"
-exec "$BIN" "$@"
+exec "$BUILD_DIR/$BIN_NAME" "$@"
