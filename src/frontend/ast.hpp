@@ -24,7 +24,7 @@ enum class ASTTag : std::uint8_t {
     /* main_token = number.
      * lhs = NA.
      * rhs = NA. */
-    NumLiteral,
+    Number,
     /* main_token = symbol.
      * lhs = NA.
      * rhs = NA. */

@@ -9,20 +9,7 @@
 
 namespace zink {
 
-Parser::Parser(TranslationUnit& ctx)
-    : _tokens(ctx.tokens)
-    , _nodes(ctx.nodes) {
-    /* Preallocate AST, avoids many reallocations */
-    _nodes.reserve(_tokens.size());
-}
-
-void Parser::parse() {
-    while (!at_end()) {
-        declaration();
-        consume();
-    }
-}
-
+/* --- Helpers ---------------------------------- */
 constexpr bool Parser::at_end() const {
     return _tokens[_token_idx].tag == TokenTag::Eof
         || _token_idx + 1 >= _tokens.size();
@@ -37,6 +24,22 @@ constexpr void Parser::push_node(ASTTag tag,
     _nodes.emplace_back(tag, main_token, lhs, rhs);
 }
 
+/* --- Parser ----------------------------------- */
+Parser::Parser(TranslationUnit& ctx)
+    : _tokens(ctx.tokens)
+    , _nodes(ctx.nodes) {
+    /* Preallocate AST, avoids many reallocations */
+    _nodes.reserve(_tokens.size());
+}
+
+void Parser::parse() {
+    while (!at_end()) {
+        declaration();
+        consume();
+    }
+}
+
+/* --- Declaration parsers --- */
 void Parser::declaration() {
     switch (current().tag) {
     case TokenTag::Var:
@@ -44,19 +47,6 @@ void Parser::declaration() {
         break;
     default:
         PANIC("Token parsed as declaration couldn't be resolved as a declaration");
-        break;
-    }
-}
-void Parser::expression() {
-    switch (consume().tag) {
-    case TokenTag::IntLiteral:
-        push_node(ASTTag::NumLiteral, _token_idx, sentinel::na, sentinel::na);
-        break;
-    case TokenTag::Identifier:
-        push_node(ASTTag::Symbol, _token_idx, sentinel::na, sentinel::na);
-        break;
-    default:
-        PANIC("Expression couldn't be resolved as an expression");
         break;
     }
 }
@@ -73,6 +63,21 @@ void Parser::variable_decl() {
 
     RELEASE_EXPECT(consume().tag == TokenTag::Semicolon,
         "Expected semicolon after expression");
+}
+
+/* --- Expression parsers --- */
+void Parser::expression() {
+    switch (consume().tag) {
+    case TokenTag::IntLiteral:
+        push_node(ASTTag::Number, _token_idx, sentinel::na, sentinel::na);
+        break;
+    case TokenTag::Identifier:
+        push_node(ASTTag::Symbol, _token_idx, sentinel::na, sentinel::na);
+        break;
+    default:
+        PANIC("Expression couldn't be resolved as an expression");
+        break;
+    }
 }
 
 }

@@ -18,7 +18,6 @@ static constexpr bool is_numeric(char c) {
 static constexpr bool is_alpha_numeric(char c) {
     return is_numeric(c) || is_alpha(c);
 }
-
 static constexpr TokenTag find_keyword(std::string_view keyword) {
     for (const auto& key : keyword_table)
         if (key.first == keyword)
@@ -26,6 +25,11 @@ static constexpr TokenTag find_keyword(std::string_view keyword) {
 
     return TokenTag::Identifier;
 }
+
+constexpr bool Lexer::at_end() const { return _idx + 1 >= _source_code.length(); }
+constexpr char Lexer::current() const { return _source_code.at(_idx); }
+constexpr char Lexer::peek() const { return _source_code.at(_idx + 1); }
+constexpr char Lexer::consume() { return _source_code.at(++_idx); }
 
 /* --- Lexer ------------------------------------ */
 Lexer::Lexer(TranslationUnit& ctx)
@@ -87,10 +91,5 @@ void Lexer::tokenize() {
 
     _tokens.emplace_back(sentinel::na, sentinel::na, TokenTag::Eof);
 }
-
-constexpr bool Lexer::at_end() const { return _idx + 1 >= _source_code.length(); }
-constexpr char Lexer::current() const { return _source_code.at(_idx); }
-constexpr char Lexer::peek() const { return _source_code.at(_idx + 1); }
-constexpr char Lexer::consume() { return _source_code.at(++_idx); }
 
 }

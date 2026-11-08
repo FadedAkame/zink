@@ -45,7 +45,7 @@ void ast(std::span<const ASTNode> ast_tree) {
 
         switch (tag) {
             CASE(ast::VarDecl);
-            CASE(ast::NumLiteral);
+            CASE(ast::Number);
             CASE(ast::Symbol);
         default:
             PANIC("Unknown: check if ALL ASTTags are cased in dumper!");
