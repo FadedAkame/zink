@@ -28,7 +28,7 @@ void tokens(std::span<const Token> tokens) {
 
     std::size_t counter { };
     RELEASE_ZLOG(log::info, "--- Lexer Output Tokens ---");
-    RELEASE_ZLOG(log::info, "[TOKEN_TAG OFFSET:LENGTH] : INDICE");
+    RELEASE_ZLOG(log::info, "[TOKEN_TAG OFFSET:LENGTH] : INDEX");
     for (const auto& tok : tokens) {
         RELEASE_ZLOG(log::info, "  [{} {}:{}] : {}",
             enum2str(tok.tag),
@@ -54,7 +54,7 @@ void ast(std::span<const ASTNode> ast_tree) {
 
     std::size_t counter { };
     RELEASE_ZLOG(log::info, "--- AST Tree ---");
-    RELEASE_ZLOG(log::info, "[implementation defined] : INDICE");
+    RELEASE_ZLOG(log::info, "[implementation defined] : INDEX");
     for (const auto& node : ast_tree) {
         RELEASE_ZLOG(log::info, "  [{} Token({}) {}:{}] : {}",
             enum2str(node.tag),

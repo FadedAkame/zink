@@ -6,7 +6,7 @@ The initial goal is to compile a variable declaration in Zink to C code.
     - [x] Literal lexing
 - [-] Parser
     - [x] AST design
-    - [ ] Atom parser design
+    - [x] Atom parser design
     - [ ] Pratt parser
 - [ ] Semantic Analyzer
     - [ ] Treewalker design
@@ -23,6 +23,6 @@ The initial goal is to compile a variable declaration in Zink to C code.
     - [ ] Data to C output
 
 ## Side Goals
-- [ ] Program arguement parser
+- [x] Program arguement parser
 - [ ] Automated tests
 - [ ] Proper compiler error system

@@ -27,7 +27,7 @@ constexpr void Parser::push_node(ASTTag tag,
 /* --- Parser ----------------------------------- */
 Parser::Parser(TranslationUnit& ctx)
     : _tokens(ctx.tokens)
-    , _nodes(ctx.nodes) {
+    , _nodes(ctx.ast) {
     /* Preallocate AST, avoids many reallocations */
     _nodes.reserve(_tokens.size());
 }

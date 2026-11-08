@@ -36,9 +36,11 @@
 
 namespace zink::log {
 
-inline constexpr std::uint8_t info { 0 };
-inline constexpr std::uint8_t warn { 1 };
-inline constexpr std::uint8_t err { 2 };
+/* Only use this to display things to the user i.e. --help screen */
+inline constexpr std::uint8_t display { 0 };
+inline constexpr std::uint8_t info { 1 };
+inline constexpr std::uint8_t warn { 2 };
+inline constexpr std::uint8_t err { 3 };
 
 }
 
@@ -46,6 +48,8 @@ namespace zink::detail::log {
 
 consteval auto level_to_char(std::uint8_t level) {
     switch (level) {
+    case zink::log::display:
+        return "";
     case zink::log::info:
         return "[I] ";
     case zink::log::warn:
@@ -72,12 +76,12 @@ template <typename... Args>
 [[noreturn]]
 inline void panic(std::format_string<Args...> msg, Args&&... args) {
     std::cerr << "unrecoverable error occured: " << std::format(msg, std::forward<Args>(args)...) << '\n';
-    std::terminate();
+    std::exit(EXIT_FAILURE);
 }
 [[noreturn]]
 inline void panic(const char* msg) {
     std::cerr << "unrecoverable error occured: " << msg << '\n';
-    std::terminate();
+    std::exit(EXIT_FAILURE);
 }
 
 }
